@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Felipe</title>
+</head>
+<body>
+  <form action="/upload" method="post" enctype="multipart/form-data">
+    <input type="file" name="csvFile" accept=".csv">
+    <button type="submit">Upload and Download</button>
+  </form>
+    <h1>Just a random test</h1>
+<button id="callServerButton">Call Server Function</button>
+<button id="callServerButton2">botao2</button>
+<button id="callServerButtons">Chatgpt</button>
+
+<script>
+  const callServerButton = document.getElementById('callServerButton');
+  
+  callServerButton.addEventListener('click', async () => {
+    try {
+      const response = fetch('/send-emailk', {
+        method: 'POST', 
+      });
+
+      if (response.ok) {
+        console.log('Server function called successfully');
+      } else {     
+        console.error('Error calling server function');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  });
+  const callServerButton2 = document.getElementById('callServerButton2');
+  
+  callServerButton2.addEventListener('click', async () => {
+    try {
+      const response = fetch('/send-email1', {
+        method: 'GET', 
+      });
+
+      if (response.ok) {
+        console.log('Server function called successfully');
+      } else {     
+        console.error('Error calling server function');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  });
+  callServerButtons.addEventListener('click', async () => {
+    try {
+      const response = fetch('/server-testes', {
+        method: 'GET', 
+      });
+
+      if (response.ok) {
+        console.log('Server function called successfully');
+      } else {     
+        console.error('Error calling server function');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  });
+  
+</script>
+
+</body>
+</html>
