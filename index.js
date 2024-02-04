@@ -38,9 +38,8 @@ app.post('/upload', upload.single('csvFile'), async (req, res) => {
       const wb = xlsx.utils.book_new();
       xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
   
-      // Convert the workbook to a buffer
-      const xlsxBuffer = xlsx.write(wb, { bookType: 'xlsx', type: 'buffer' });
-  
+      const xlsxBuffer = xlsx.write(wb, { bookType: 'xlsx', type: 'buffer', bookSST: false, bookFiles: ['xl/styles.xml'], MimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
+
       // Set response headers for file download
       res.setHeader('Content-Disposition', 'attachment; filename=data.xlsx');
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
