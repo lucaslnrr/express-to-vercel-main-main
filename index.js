@@ -25,32 +25,31 @@ app.post('/upload', upload.single('csvFile'), async (req, res) => {
       if (!req.file) {
         return res.status(400).send('No file uploaded.');
       }
+  
       const csvBuffer = req.file.buffer.toString();
-      const fileName = req.file.originalname.replace('.csv', ''); // Extract the name of the uploaded file without the extension
-      
+  
       // Convert CSV to JSON
       const jsonArray = await csvtojson({ delimiter: ';' }).fromString(csvBuffer);
-      
-      // Create a new worksheet with reordered columns
-      const reorderedHeaders = ['Header3', 'Header1', 'Header2']; // Change the order as needed
-      const reorderedData = jsonArray.map(row => reorderedHeaders.map(header => row[header]));
-      
-      const ws = xlsx.utils.aoa_to_sheet([reorderedHeaders, ...reorderedData]);
-      
+  
+      // Create a new worksheet
+      const ws = xlsx.utils.aoa_to_sheet(jsonArray.map(row => Object.values(row).map(value => value.trim())));
+  
       // Create a new workbook and add the worksheet
       const wb = xlsx.utils.book_new();
-      xlsx.utils.book_append_sheet(wb, ws, fileName); // Set the worksheet name to match the file name
-      
+      xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
+  
+      // Extract original file name from the uploaded file
+      const originalFileName = req.file.originalname.replace(/\.[^/.]+$/, ''); // Remove file extension
+  
+      // Set response headers for file download with the original file name
+      res.setHeader('Content-Disposition', `attachment; filename=${originalFileName}.xlsx`);
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  
       // Convert the workbook to a buffer
       const xlsxBuffer = xlsx.write(wb, { bookType: 'xlsx', type: 'buffer' });
-      
-      // Set response headers for file download
-      res.setHeader('Content-Disposition', `attachment; filename=${fileName}.xlsx`);
-      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-      
+  
       // Send XLSX file as response
       res.send(xlsxBuffer);
-      
     } catch (error) {
       console.error('Error handling file upload:', error);
       res.status(500).send('Internal Server Error');
