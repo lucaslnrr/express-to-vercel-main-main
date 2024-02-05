@@ -38,54 +38,15 @@ app.post('/upload', upload.single('csvFile'), async (req, res) => {
       const wb = xlsx.utils.book_new();
       xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
   
-      const xlsxBuffer = xlsx.write(wb, {
-        bookType: 'xlsx',
-        type: 'buffer',
-        bookSST: false,
-        bookFiles: ['xl/styles.xml'],
-        MimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8',
-        Props: {
-          Title: 'Your Title',
-          Author: 'Your Author',
-          CreatedDate: new Date(),
-        },
-        SheetNames: ['Sheet1'], // Make sure the SheetNames option is specified
-        Sheets: {
-          'Sheet1': ws, // Make sure the Sheets option is specified with your worksheet
-        },
-        bookProps: {
-          date1904: false,
-          defaultAuthor: 'Your Author',
-          defaultTitle: 'Your Title',
-          use1904Dates: false,
-        },
-        bookType: 'xlsx',
-        fileType: 'buffer',
-        mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        sheetProps: {
-          date1904: false,
-          defaultRowHeight: 15,
-          defaultColWidth: 9,
-          dyDescent: 0.25,
-          outlineLevelCol: 0,
-          outlineLevelRow: 0,
-          showGridLines: true,
-          showRowColHeaders: true,
-          showSummaryBelow: true,
-          tabColor: null,
-          view: 'normal',
-          zoomScale: 100,
-          zoomToFit: false,
-        },
-        SheetNames: ['Sheet1'], // Make sure the SheetNames option is specified
-        Sheets: {
-          'Sheet1': ws, // Make sure the Sheets option is specified with your worksheet
-        },
-      });
-      
-      // Set response headers for file download
-      res.setHeader('Content-Disposition', 'attachment; filename=data.xlsx');
+      // Extract original file name from the uploaded file
+      const originalFileName = req.file.originalname.replace(/\.[^/.]+$/, ''); // Remove file extension
+  
+      // Set response headers for file download with the original file name
+      res.setHeader('Content-Disposition', `attachment; filename=${originalFileName}.xlsx`);
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  
+      // Convert the workbook to a buffer
+      const xlsxBuffer = xlsx.write(wb, { bookType: 'xlsx', type: 'buffer' });
   
       // Send XLSX file as response
       res.send(xlsxBuffer);
