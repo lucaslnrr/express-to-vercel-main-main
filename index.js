@@ -20,7 +20,44 @@ const upload = multer({ storage: storage });
 app.get('/', (req, res) => {
     res.sendFile('index.html', { root: join(__dirname, 'public') });
 });
+app.post('/authorizePurchaseOrder', async (req, res) => {
+    try {
+      // Ensure that the purchaseOrderId is received correctly in the request body
+      const purchaseOrderId = req.body.purchaseOrderId;
+      const username = 'guerrero-approval';
+      const password = '4VpNIGrg93lBKsdV983i9skSCwRhoHtW'; // Replace with actual credentials
+  
+      // Constructing the API endpoint URL with the purchase order ID included in the path
+      const apiUrl = `https://api.sienge.com.br/guerrero/public/api/v1/purchase-orders/${purchaseOrderId}/authorize`;
+  
+      // Making the PUT request with authentication credentials
+      const response = await fetch(apiUrl, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Basic ' + Buffer.from(`${username}:${password}`).toString('base64')
+        },
+        body: JSON.stringify({
+          // Add any payload if required
+        })
+      });
 
+      console.log(purchaseOrderId);
+      console.log('Response status:', response.status);
+      const responseBody = await response.text();
+      console.log('Response body:', responseBody);
+  
+      if (!response.ok) {
+        throw new Error('Failed to authorize purchase order');
+      }
+  
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      console.error('Error:', error.message);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 app.post('/upload', upload.single('csvFile'), async (req, res) => {
     try {
         if (!req.file) {
