@@ -35,8 +35,7 @@ app.post('/authorizePurchaseOrder', async (req, res) => {
         'Content-Type': 'application/json',
         'Authorization': 'Basic ' + Buffer.from(`${username}:${password}`).toString('base64')
       },
-      body: JSON.stringify({
-      })
+      body: JSON.stringify({})
     });
 
     console.log(purchaseOrderId);
@@ -50,18 +49,13 @@ app.post('/authorizePurchaseOrder', async (req, res) => {
     const responseBody = await response.json();
     console.log('Response body:', responseBody);
 
-    if (responseBody.authorized) {
-      console.log('Pedido Autorizado');
-    } else {
-      console.log('Erro');
-    }
-
-    res.json(responseBody);
+    res.json(responseBody); // Return the response body as JSON
   } catch (error) {
     console.error('Error:', error.message);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 
 app.post('/upload', upload.single('csvFile'), async (req, res) => {
