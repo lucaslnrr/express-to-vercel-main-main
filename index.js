@@ -39,8 +39,9 @@ app.post('/authorizePurchaseOrder', async (req, res) => {
     console.log(purchaseOrderId);
     console.log('Response status:', response.status);
 
-    if (!response.ok) {
-      throw new Error('Failed to authorize purchase order');
+    if (response.status === 204) {
+      console.log('Purchase order has been authorized successfully');
+      return res.status(204).end(); // Send 204 No Content response
     }
 
     const responseBody = await response.json();
@@ -58,6 +59,7 @@ app.post('/authorizePurchaseOrder', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 app.post('/upload', upload.single('csvFile'), async (req, res) => {
     try {
