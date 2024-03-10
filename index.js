@@ -1,5 +1,7 @@
 import express from 'express';
+import nodemailer from 'nodemailer';
 import cors from 'cors';
+import smtpTransport from 'nodemailer-smtp-transport';
 import multer from 'multer';
 import csvtojson from 'csvtojson';
 import ExcelJS from 'exceljs';
@@ -20,6 +22,7 @@ const upload = multer({ storage: storage });
 app.get('/', (req, res) => {
     res.sendFile('index.html', { root: join(__dirname, 'public') });
 });
+
 app.post('/authorizePurchaseOrder', async (req, res) => {
   try {
     const purchaseOrderId = req.body.purchaseOrderId;
@@ -40,7 +43,7 @@ app.post('/authorizePurchaseOrder', async (req, res) => {
     console.log('Response status:', response.status);
 
     if (response.status === 204) {
-      console.log('Purchase order has been authorized successfully');
+      console.log('Pedido Autorizado');
       return res.status(204).end(); // Send 204 No Content response
     }
 
@@ -48,9 +51,9 @@ app.post('/authorizePurchaseOrder', async (req, res) => {
     console.log('Response body:', responseBody);
 
     if (responseBody.authorized) {
-      console.log('Purchase order has been authorized successfully');
+      console.log('Pedido Autorizado');
     } else {
-      console.log('Purchase order authorization failed');
+      console.log('Erro');
     }
 
     res.json(responseBody);
