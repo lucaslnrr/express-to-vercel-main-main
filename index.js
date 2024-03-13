@@ -55,40 +55,30 @@ app.post('/authorizePurchaseOrder', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-app.post('/fiscal', async (req, res) => {
-  try {
-    const fiscal = req.body.fiscal;
-    const billId = fiscal.billId;
-    const operationTaxCode = parseInt(fiscal.operationTaxCode, 10);
-    const username = 'guerrero-felipesantos';
-    const password = 'd0YnARDcra45tSC3jD8ip89MMuBpm2kN'; 
-    const apiUrl = `https://api.sienge.com.br/guerrero/public/api/v1/bills/${billId}/tax-information`;
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
+function insertTaxInformation(billId, taxInformation) {
+  const username = 'guerrero-approval';
+  const password = '4VpNIGrg93lBKsdV983i9skSCwRhoHtW'; 
+  const apiUrl = 'https://api.sienge.com.br/guerrero/public/api/v1/bills/' + billId + '/tax-information';
+
+  // Make a POST request to the API endpoint
+  var options = {
+    method: 'POST',
+    headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Basic ' + Buffer.from(`${username}:${password}`).toString('base64')
       },
-      body: JSON.stringify({ operationTaxCode })
-    });
+    payload: JSON.stringify(taxInformation)
+  };
 
-    console.log(fiscal);
-    console.log('Response status:', response.status);
-
-    if (response.status === 204) {
-      console.log('ok');
-      return res.status(204).end();
-    }
-
-    const responseBody = await response.json();
-    console.log('Response body:', responseBody);
-
-    res.json(responseBody); 
+  try {
+    var response = UrlFetchApp.fetch(apiUrl, options);
+    var responseData = JSON.parse(response.getContentText());
+    return responseData;
   } catch (error) {
-    console.error('Error:', error.message);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error('Error:', error);
+    return { error: 'Failed to insert tax information' };
   }
-});
+}
 
 app.post('/upload', upload.single('csvFile'), async (req, res) => {
     try {
