@@ -55,12 +55,10 @@ app.post('/authorizePurchaseOrder', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
 app.post('/fiscal', async (req, res) => {
   try {
     const fiscal = req.body.fiscal;
     const billId = fiscal.billId;
-    const operationTaxCode = 2653;
     const username = 'guerrero-felipesantos';
     const password = 'd0YnARDcra45tSC3jD8ip89MMuBpm2kN'; 
     const apiUrl = `https://api.sienge.com.br/guerrero/public/api/v1/bills/${billId}/tax-information`;
@@ -70,7 +68,7 @@ app.post('/fiscal', async (req, res) => {
         'Content-Type': 'application/json',
         'Authorization': 'Basic ' + Buffer.from(`${username}:${password}`).toString('base64')
       },
-      body: JSON.stringify({ operationTaxCode })
+      body: JSON.stringify({ operationTaxCode: fiscal.operationTaxCode.toString() })
     });
 
     console.log(fiscal);
