@@ -58,7 +58,7 @@ app.post('/authorizePurchaseOrder', async (req, res) => {
 });
 app.post('/submitTaxInformation', async (req, res) => {
   try {
-      const { billId, cofinsTaxSituation, taxService, measurementUnit, serviceCodeId, pisTaxSituation, unitPrice, quantity, serviceTaxCode } = req.body;
+      const { billId, cofinsTaxSituation, taxService, measurementUnit, serviceCodeId, pisTaxSituation, unitPrice, quantity, natureServiceId } = req.body;
 
       const username = 'guerrero-felipesantos';
       const password = 'd0YnARDcra45tSC3jD8ip89MMuBpm2kN';
@@ -79,7 +79,7 @@ app.post('/submitTaxInformation', async (req, res) => {
               pisTaxSituation,
               unitPrice,
               quantity,
-              serviceTaxCode
+              natureServiceId
           })
       });
 
