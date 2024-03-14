@@ -1,5 +1,6 @@
 import express from 'express';
-import nodemailer from 'nodemailer';
+import bodyParser from 'body-parser';
+import fetch from 'node-fetch';
 import cors from 'cors';
 import smtpTransport from 'nodemailer-smtp-transport';
 import multer from 'multer';
@@ -55,37 +56,38 @@ app.post('/authorizePurchaseOrder', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-app.post('/fiscal', async (req, res) => {
+app.post('/submitTaxInformation', async (req, res) => {
   try {
-    const fiscal = req.body.fiscal;
-    const billId = fiscal.billId;
-    const username = 'guerrero-felipesantos';
-    const password = 'd0YnARDcra45tSC3jD8ip89MMuBpm2kN'; 
-    const apiUrl = `https://api.sienge.com.br/guerrero/public/api/v1/bills/${billId}/tax-information`;
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Basic ' + Buffer.from(`${username}:${password}`).toString('base64')
-      },
-      body: JSON.stringify({ operationTaxCode: fiscal.operationTaxCode.toString() })
-    });
+      const { billId, cofinsTaxSituation, taxService, measurementUnit, serviceCodeId, pisTaxSituation, unitPrice, quantity, serviceTaxCode } = req.body;
 
-    console.log(fiscal);
-    console.log('Response status:', response.status);
+      const username = 'guerrero-felipesantos';
+      const password = 'd0YnARDcra45tSC3jD8ip89MMuBpm2kN';
 
-    if (response.status === 204) {
-      console.log('ok');
-      return res.status(204).end();
-    }
+      const apiUrl = `https://api.sienge.com.br/guerrero/public/api/v1/bills/${billId}/tax-information/items`;
 
-    const responseBody = await response.json();
-    console.log('Response body:', responseBody);
+      const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Basic ${Buffer.from(`${username}:${password}`).toString('base64')}`
+          },
+          body: JSON.stringify({
+              cofinsTaxSituation,
+              taxService,
+              measurementUnit,
+              serviceCodeId,
+              pisTaxSituation,
+              unitPrice,
+              quantity,
+              serviceTaxCode
+          })
+      });
 
-    res.json(responseBody); 
+      const responseData = await response.json();
+      res.json(responseData);
   } catch (error) {
-    console.error('Error:', error.message);
-    res.status(500).json({ error: 'Internal Server Error' });
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
