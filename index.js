@@ -61,7 +61,7 @@ app.post('/submitTaxInformation', async (req, res) => {
       const { billId, cofinsTaxSituation, taxService, measurementUnit, serviceCodeId, pisTaxSituation, unitPrice, quantity, natureServiceId } = req.body;
 
       const username = 'guerrero-felipesantos';
-      const password = 'd0YnARDcra45tSC3jD8ip89MMuBpm2kN';
+      const password = 'E8dZI239gBCArGoQfFSNdMgDdtrXdx0H';
 
       const apiUrl = `https://api.sienge.com.br/guerrero/public/api/v1/bills/${billId}/tax-information/items`;
 
